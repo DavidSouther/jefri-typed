@@ -44,8 +44,9 @@ gulp.task('test', ['build:tsc'], function() {
 /**
  * Some default tasks.
  */
+const DEFAULT = ['default'];
 gulp.task('default', DEFAULT_TASKS);
-gulp.task('watch', 'default', function() { gulp.watch([SOURCES], 'default'); });
+gulp.task('watch', DEFAULT, function() { gulp.watch([SOURCES], DEFAULT); });
 
 if (require.main === module) {
   gulp.runTask('default');
