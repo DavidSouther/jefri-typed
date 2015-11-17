@@ -1,0 +1,20 @@
+{
+  "name": "jefri-typed",
+  "version": "1.0.0",
+  "description": "Type definitions creator.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "David Souther <davidsouther@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "gulp": "^3.9.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-tslint": "^3.6.0",
+    "gulp-typescript": "^2.9.2",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0"
+  }
+}
