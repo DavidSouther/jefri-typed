@@ -10,10 +10,13 @@ declare module JEFRi {
     EntityRelationship: EntityRelationship;
     EntityRelationshipType: EntityRelationshipType;
     EntityMethod: EntityMethod;
+    Entity: Entity;
+    EntityArray: EntityArray;
   }
 
   export interface RuntimeStatic {
-    new(contextUri: string, options: RuntimeOptions, protos: Prototypes): Runtime;
+    new(options: RuntimeOptions): Runtime;
+    new(contextUri: string, options: RuntimeOptions): Runtime;
   }
 
   export interface RuntimeOptions {
@@ -28,7 +31,12 @@ declare module JEFRi {
   }
 
   interface Runtime extends NodeJS.EventEmitter {
-    load(contextUri: string, protos: Prototypes): Promise<Runtime>;
+    load(contextUri: string, protos?: Prototypes): Promise<Runtime>;
+    clear(): Runtime;
+    definition(name: string): ContextEntity;
+    extend(type: string, protos: Prototypes): Runtime;
+    intern<E extends Entity>(entity: E, updateOnIntern: boolean): E;
+    build<E extends Entity>(type: string, obj: any): E;
   }
 
   export interface Context {
@@ -52,14 +60,12 @@ declare module JEFRi {
   }
 
   export interface EntityProperty {
-    type: string;
+    type: string|JEFRiPropertyType;
     attributes?: JEFRiAttributes;
   }
 
-  export enum EntityRelationshipType {
-    is_a,
-    has_a,
-    has_many
+  export enum JEFRiPropertyType {
+    int, string, list_int, list_string, boolean
   }
 
   export interface EntityRelationship {
@@ -72,14 +78,27 @@ declare module JEFRi {
     back?: string;
   }
 
+  export enum EntityRelationshipType {
+    is_a,
+    has_a,
+    has_many
+  }
+
   export interface EntityMethod {
-    params?: { [k: string]: string },
+    params?: { [k: string]: string|JEFRiPropertyType },
     order?: string[],
-    return?: string;
+    return?: string|JEFRiPropertyType;
     definitions: {
       [k: string]: string;
       javascript: string;
     }
+  }
+
+  export interface Entity {
+
+  }
+
+  export interface EntityArray extends Array<Entity> {
   }
 }
 
