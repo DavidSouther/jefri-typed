@@ -3,6 +3,7 @@
 declare module UserContext {
   interface Context {
     User: User;
+    Authinfo: Authinfo;
   }
 
   interface User extends JEFRi.Entity {
@@ -26,4 +27,3 @@ declare module "user-context" {
   var c: UserContext.Context;
   export = c;
 }
-

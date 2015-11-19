@@ -4,6 +4,7 @@ let gulp = require('gulp');
 
 const SOURCES = 'src/**/*.ts';
 const TEST_SOURCES = 'src/**/*.{mock,spec}.ts';
+const MOCKS = 'src/**/*mock.ts';
 const TYPEDEPS = 'src/typings/**/*.d.ts';
 const COMPILED_TEST_SOURCES = 'dist/**/*.spec.js';
 
@@ -27,7 +28,7 @@ gulp.task('build:tsc', function() {
 let tslintconfig = require('./tslint.json');
 let tslint = require('gulp-tslint');
 gulp.task('tslint', function() {
-  return gulp.src([SOURCES, `!${TYPEDEPS}`])
+  return gulp.src([SOURCES, `!${TYPEDEPS}`, `!${MOCKS}`])
       .pipe(tslint({configuration: tslintconfig}))
       .pipe(tslint.report('prose'));
 });

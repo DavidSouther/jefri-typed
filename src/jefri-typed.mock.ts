@@ -8,10 +8,10 @@ export const CONTEXT: JEFRi.Context = {
     "User": {
       "key": "user_id",
       "properties": {
-        "user_id": {"type": "int"},
+        "user_id": {"type": "string"},
         "name": {"type": "string"},
         "address": {"type": "string"},
-        "nicknames": {"type": "list"}
+        "nicknames": {"type": "list<string>"}
       },
       "relationships": {
         "authinfo": {
@@ -26,8 +26,8 @@ export const CONTEXT: JEFRi.Context = {
     "Authinfo": {
       "key": "authinfo_id",
       "properties": {
-        "authinfo_id": {"type": "int"},
-        "user_id": {"type": "int", "attributes": {}},
+        "authinfo_id": {"type": "string"},
+        "user_id": {"type": "string", "attributes": {}},
         "username": {"type": "string", "attributes": {"length": "45"}},
         "password": {"type": "string", "attributes": {"length": "45"}}
       },
