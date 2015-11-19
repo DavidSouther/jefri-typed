@@ -1,8 +1,10 @@
 import { expect } from 'chai';
-import { MESSAGE } from './jefri-typed';
+import { Runtime } from 'jefri';
+import { CONTEXT } from './jefri-typed.mock';
 
-describe('Jefri Typed', function() {
-  it('eports a message', function() {
-    expect(MESSAGE).to.equal('jefri-typed');
+describe('Jefri', function() {
+  it('has a Runtime', function() {
+    expect(Runtime).to.exist;
   });
 });
+
