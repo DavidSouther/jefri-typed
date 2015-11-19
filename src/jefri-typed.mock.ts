@@ -245,7 +245,7 @@ export const TabletTop: JEFRi.Context = {
           "definitions": {"javascript": "return this.mod(this.charisma);"}
         },
         "cantrips": {
-          "return": "list",
+          "return": "list<Spell>",
           "definitions": {
             "javascript":
                 "return this.spells.filter(function(spell){ return spell.level === 0; });"
