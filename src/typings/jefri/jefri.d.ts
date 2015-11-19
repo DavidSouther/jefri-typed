@@ -2,7 +2,7 @@
 /// <reference path="../es6-promise/es6-promise.d.ts" />
 
 declare module JEFRi {
-  interface JEFRiStatic {
+  interface JEFRi {
     Runtime: RuntimeStatic;
     Context: Context;
     ContextEntity: ContextEntity;
@@ -11,7 +11,10 @@ declare module JEFRi {
     EntityRelationshipType: EntityRelationshipType;
     EntityMethod: EntityMethod;
     Entity: Entity;
-    EntityArray: EntityArray;
+    Transaction: TransactionStatic;
+    EntityComparator: EntityComparator;
+    isEntity: isEntity;
+    Store: StoreStatic;
   }
 
   export interface RuntimeStatic {
@@ -37,6 +40,7 @@ declare module JEFRi {
     extend(type: string, protos: Prototypes): Runtime;
     intern<E extends Entity>(entity: E, updateOnIntern: boolean): E;
     build<E extends Entity>(type: string, obj: any): E;
+    remove(entity: Entity): Runtime;
   }
 
   export interface Context {
@@ -65,7 +69,7 @@ declare module JEFRi {
   }
 
   export enum JEFRiPropertyType {
-    int, string, list_int, list_string, boolean
+    int, float, string, list, object, boolean
   }
 
   export interface EntityRelationship {
@@ -94,16 +98,63 @@ declare module JEFRi {
     }
   }
 
-  export interface Entity {
-    _definition(): ContextEntity;
+  export enum EntityStatus {
+    NEW, PERSISTED, MODIFIED
   }
 
-  export interface EntityArray extends Array<Entity> {
+  export interface Entity extends NodeJS.EventEmitter {
+    _type(full?: boolean): string;
+    id(full?: boolean): string;
+    _definition(): ContextEntity;
+    _status(): string|EntityStatus;
+    _encode(): any;
+    toJSON(): any;
+    _destroy(): void;
+    _compare(e: Entity): boolean;
+  }
+
+  export interface EntityArray<E extends Entity> extends Array<E> {
+    add(e: E): EntityArray<E>;
+    remove(e: E): EntityArray<E>;
+  }
+
+  export interface TransactionStatic {
+    new(context: Context, store: Store): Transaction;
+  }
+
+  export interface Transaction extends NodeJS.EventEmitter {
+    encode(): {attributes: JEFRiAttributes, entities: Entity[]};
+    toString(): string;
+    get(store?: Store): Promise<Transaction>;
+    persist(store?: Store): Promise<Transaction>;
+    add(entities: Array<Entity>): Transaction;
+    attributes(attrs: JEFRiAttributes): Transaction;
+  }
+
+  export interface EntityComparator {
+    (a: Entity, b: Entity): boolean;
+    (a: {[k: string]: any}, b: {[k: string]: any}): boolean;
+  }
+
+  export interface isEntity {
+    (e: any): boolean;
+  }
+
+  export interface StoreStatic {
+    new (options?: JEFRiAttributes): Store;
+  }
+
+  export enum StoreExecutionType { get, persist }
+
+  export interface Store {
+    execute(type: StoreExecutionType, t: Transaction): Promise<Transaction>;
+    get(t: Transaction): Promise<Transaction>;
+    persist(t: Transaction): Promise<Transaction>;
   }
 }
 
 declare module 'jefri' {
-  var j: JEFRi.JEFRiStatic;
+  var j: JEFRi.JEFRi;
   export = j;
 }
 

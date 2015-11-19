@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { Runtime } from 'jefri';
 import * as JEFRi from 'jefri';
+import * as UserContext from 'user-context';
 import { CONTEXT } from './jefri-typed.mock';
 
 describe('Jefri', function() {
@@ -9,15 +10,9 @@ describe('Jefri', function() {
   });
 
   it('creates a Runtime with a context', function() {
-    type User = JEFRi.Entity & {
-      user_id: string,
-      name: string,
-      address: string,
-      nicknames: string[]
-    };
     const options: JEFRi.RuntimeOptions = {debug: {context: CONTEXT}};
     let runtime = new Runtime(options);
-    let entity = runtime.build<User>('User', {name: 'David'});
+    let entity = runtime.build<UserContext.User>('User', {name: 'David'});
     expect(entity.name).to.equal('David');
     expect(entity._definition().key).to.equal('user_id');
   });
