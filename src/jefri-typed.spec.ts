@@ -19,6 +19,7 @@ describe('Jefri', function() {
     let runtime = new Runtime(options);
     let entity = runtime.build<User>('User', {name: 'David'});
     expect(entity.name).to.equal('David');
+    expect(entity._definition().key).to.equal('user_id');
   });
 });
 

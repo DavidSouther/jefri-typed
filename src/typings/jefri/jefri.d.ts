@@ -95,7 +95,7 @@ declare module JEFRi {
   }
 
   export interface Entity {
-
+    _definition(): ContextEntity;
   }
 
   export interface EntityArray extends Array<Entity> {
