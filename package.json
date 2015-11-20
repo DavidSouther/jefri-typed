@@ -16,5 +16,8 @@
     "gulp-typescript": "^2.9.2",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0"
+  },
+  "dependencies": {
+    "jefri": "^1.2.4"
   }
 }
