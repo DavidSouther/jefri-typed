@@ -1,29 +1,26 @@
-import * as JEFRi from 'jefri';
+import {
+  Context,
+  ContextEntity,
+  Entity,
+  EntityMethod,
+  EntityProperty,
+  EntityRelationship,
+  JEFRiPropertyType
+} from 'jefri';
 
-export function generator(name: string, context: JEFRi.Context): string {
+export function generator(name: string, context: Context): string {
   return [
-    getReferenceLine(),
-    getAmbientModule(),
-    getExternalModule()
+    getJEFRiLine(),
+    interfaces()
   ].join('\n');
 
-  function getReferenceLine(): string {
-    return '/// <reference path="./jefri.d.ts" />\n';
+  function getJEFRiLine(): string {
+    return `import { Entity } from 'jefri';\n`;
   }
 
-  function getAmbientModule(): string {
-    return `declare module ${name}Context {
-  interface Context {
-${contextExports()}
-  }
-
-${interfaces()}
-}
-`;
-  }
 
   function contextExports(): string {
-    return Object.keys(context.entities).map(_ => `    ${_}: ${_};`).join('\n');
+    return Object.keys(context.entities).map(_ => `  ${_}: ${_};`).join('');
   }
 
   function interfaces(): string {
@@ -32,48 +29,48 @@ ${interfaces()}
   }
 
   function makeInterface(name: string): string {
-    return `  interface ${name} extends JEFRi.Entity {
+    return `export interface ${name} extends Entity {
 ${makeProperties(name)}
-  }`;
+}`;
   }
 
   function makeProperties(name: string): string {
-    let entity: JEFRi.ContextEntity = context.entities[name];
+    let entity: ContextEntity = context.entities[name];
     return Object.keys(entity.properties).map(makeProperty)
       .concat(Object.keys(entity.relationships || {}).map(makeRelationship))
       .concat(Object.keys(entity.methods || {}).map(makeMethod))
       .join('\n');
 
     function makeProperty(prop: string): string {
-      let property: JEFRi.EntityProperty = entity.properties[prop];
-      return `    ${prop}: ${makeType(property.type)};`;
+      let property: EntityProperty = entity.properties[prop];
+      return `  ${prop}: ${makeType(property.type)};`;
     }
 
     function makeRelationship(rel: string): string {
-      let relationship: JEFRi.EntityRelationship = entity.relationships[rel];
+      let relationship: EntityRelationship = entity.relationships[rel];
       switch(relationship.type) {
         case 'has_a':
-          return `    ${rel}: ${relationship.to.type};`;
+          return `  ${rel}: ${relationship.to.type};`;
         case 'has_many':
-          return `    ${rel}: JEFRi.EntityArray<${relationship.to.type}>;`;
+          return `  ${rel}: EntityArray<${relationship.to.type}>;`;
         default:
-          return `    ${rel}: any;`;
+          return `  ${rel}: any;`;
       }
     }
 
     function makeMethod(prop: string): string {
-      let method: JEFRi.EntityMethod = entity.methods[prop];
-      return `    ${prop}(${makeParams(method)}): ${makeType(method.return)};`
+      let method: EntityMethod = entity.methods[prop];
+      return `  ${prop}(${makeParams(method)}): ${makeType(method.return)};`
     }
 
-    function makeParams(method: JEFRi.EntityMethod): string {
+    function makeParams(method: EntityMethod): string {
       return method.order && method.params ?
         method.order.map(_ => `${_}: ${makeType(method.params[_])}`).join(','):
         '';
     }
   }
 
-  function makeType(jefriType: string|JEFRi.JEFRiPropertyType): string {
+  function makeType(jefriType: string|JEFRiPropertyType): string {
     if (typeof jefriType == 'string') {
       let listType = (<string>jefriType).match(/list\<([^\>]+)\>/);
       if (listType !== null) {
@@ -103,12 +100,5 @@ ${makeProperties(name)}
     } else {
       return 'any';
     }
-  }
-
-  function getExternalModule(): string {
-    return `declare module "${name.toLowerCase()}-context" {
-  var c: ${name}Context.Context;
-  export = c;
-}\n`;
   }
 }
